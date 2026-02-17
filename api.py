@@ -5,14 +5,16 @@ from .ds import DS
 
 logger = logging.getLogger(__name__)
 
-class API:
-    def __init__(self, ip: str, port: str, account: str, password: str):
+class Syno:
+    '''Main Synology API client wrapper.'''
+    def __init__(self, ip: str, port: str, account: str, password: str) -> None:
         logger.debug('ip=%s, port=%s, account=%s, password=%s',
             ip,
             port,
             account,
             password
         )
+
         self.ip = ip
         self.port = port
         self.account = account
@@ -23,9 +25,11 @@ class API:
 
     def __enter__(self):
         logger.debug('')
+
         self.base.__enter__()
         self.sid = self.base.auth(account=self.account, password=self.password)
         self.ds.__enter__(sid=self.sid)
+
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):

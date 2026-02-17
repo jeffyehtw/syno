@@ -7,21 +7,27 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Task:
-    def __init__(self, ip: str, port: str):
-        logger.debug('')
+    '''Class to manage Synology Download Station tasks.'''
+    def __init__(self, ip: str, port: str) -> None:
+        logger.debug('ip=%s, port=%s', ip, port)
+
         self.url = f'http://{ip}:{port}/webapi/DownloadStation/task.cgi?'
         self.sid = None
 
     def __enter__(self, sid: str):
         logger.debug('')
+
         self.sid = sid
+
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         logger.debug('')
 
     def list(self, offset: int = 0, limit: int = -1) -> list[dict]:
-        logger.debug('')
+        '''List tasks.'''
+        logger.debug('offset=%s, limit=%s', offset, limit)
+
         params = {
             'api': 'SYNO.DownloadStation.Task',
             'version': 1,
@@ -39,6 +45,7 @@ class Task:
         return None
 
     def info(self, tasks: list[str]) -> None:
+        '''Get task info.'''
         logger.debug('tasks=[%s]', ','.join(tasks))
 
     def create(
@@ -48,15 +55,17 @@ class Task:
             unzip_password: str = None,
             destination: str = None
         ) -> None:
+        '''Create a new download task.'''
         logging.debug(
-            'uri=%s, file=%s, unzip_password=%s, dst=%s',
+            'uri=%s, file=%s, unzip_password=%s, destination=%s',
             uri,
             file,
             unzip_password,
-            dst
+            destination
         )
 
     def delete(self, tasks: list[int], force_complete: bool = False) -> None:
+        '''Delete tasks.'''
         logger.debug(
             'tasks=[%s], force_complete=%d',
             ','.join(tasks),
@@ -75,11 +84,10 @@ class Task:
         if response.status_code == 200:
             logger.debug(response)
 
-    def pause(self, tasks: str) -> None:
+    def pause(self, tasks: list[str]) -> None:
+        '''Pause tasks.'''
         logger.debug('tasks=[%s]', ','.join(tasks))
 
-    def resume(self, tasks: str) -> None:
-        logger.debug('tasks=[%s]', ','.join(tasks))
-
-    def resume(self, tasks: str, destination: str) -> None:
+    def resume(self, tasks: list[str], destination: str = None) -> None:
+        '''Resume tasks.'''
         logger.debug('tasks=[%s], destination=%s', ','.join(tasks), destination)

@@ -5,18 +5,24 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Base:
-    def __init__(self, ip: str, port: int):
+    '''Base class for Synology API interactions.'''
+    def __init__(self, ip: str, port: str) -> None:
+        logger.debug('ip=%s, port=%s', ip, port)
+
         self.ip = ip
         self.port = port
         self.session = 'cjyeh'
 
     def __enter__(self):
+        logger.debug('')
+
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        pass
+        logger.debug('')
 
     def info(self, query: str = 'ALL') -> None:
+        '''Get API info.'''
         logger.debug('query=%s', query)
 
         url = f'http://{self.ip}:{self.port}/webapi/query.cgi?'
@@ -34,12 +40,13 @@ class Base:
         return data
 
     def auth(
-            self,
-            account: str,
-            password: str,
-            fmt: str = 'cookie',
-            opt_code: str = None
-        ) -> str:
+        self,
+        account: str,
+        password: str,
+        fmt: str = 'cookie',
+        opt_code: str = None
+    ) -> str:
+        '''Authenticate with Synology NAS.'''
         logger.debug('account=%s, password=%s, fmt=%s, opt_code=%s',
             account,
             password,
@@ -71,6 +78,8 @@ class Base:
         return data['data']['sid']
 
     def logout(self) -> None:
+        logger.debug('')
+
         url = f'http://{self.ip}:{self.port}/webapi/auth.cgi?'
         params = {
             'api': 'SYNO.API.Auth',
